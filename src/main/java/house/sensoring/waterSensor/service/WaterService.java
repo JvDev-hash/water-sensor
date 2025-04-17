@@ -5,6 +5,7 @@ import java.util.List;
 
 import house.sensoring.waterSensor.model.Water;
 import house.sensoring.waterSensor.repository.WaterRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,13 +16,20 @@ public class WaterService {
         this.waterRepository = waterRepository;
     }
 
-    public Water getAllWaterReadings() {
+    public List<Water> getAllWaterReadings() {
         List<Water> reading = waterRepository.findAll();
         System.out.println(reading);
         if (reading.isEmpty()) {
             return null;
         }
-        return reading.get(0);
+        return reading;
+    }
+
+    public Water getLastWaterReading() {
+        Water reading = waterRepository.findLastReading()
+                .orElseThrow(() -> new EntityNotFoundException("There is no entity: "));
+        System.out.println(reading);
+        return reading;
     }
 
     public Water saveWaterReading(Water water) {
