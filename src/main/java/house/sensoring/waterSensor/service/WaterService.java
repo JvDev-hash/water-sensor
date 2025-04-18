@@ -1,6 +1,7 @@
 package house.sensoring.waterSensor.service;
 
 import java.util.Date;
+import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 import house.sensoring.waterSensor.model.Water;
@@ -33,7 +34,14 @@ public class WaterService {
     }
 
     public Water saveWaterReading(Water water) {
-        water.setTimestamp(new Date());
-        return waterRepository.save(water);
+        Water lastReading = waterRepository.findLastReading()
+                .orElseThrow(() -> new EntityNotFoundException("There is no entity: "));
+
+        if(!lastReading.getHasWater().equals(water.getHasWater())) {
+            water.setTimestamp(new Date());
+            return waterRepository.save(water);
+        } else {
+            throw new DuplicateFormatFlagsException("Duplicate value");
+        }
     }
 }

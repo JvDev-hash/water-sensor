@@ -1,5 +1,6 @@
 package house.sensoring.waterSensor.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import house.sensoring.waterSensor.model.Water;
 import house.sensoring.waterSensor.service.WaterService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 @RestController
@@ -46,10 +48,15 @@ public class WaterController {
             }
         }
     }
-
     @PostMapping("/reading")
-    public ResponseEntity<Water> saveWaterReading(@RequestBody Water water) {
-        waterService.saveWaterReading(water);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<?> saveWaterReading(@RequestBody Water water) {
+        try {
+            waterService.saveWaterReading(water);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage().getBytes(StandardCharsets.UTF_8), HttpStatus.NOT_FOUND);
+        } catch (DuplicateFormatFlagsException e){
+            return new ResponseEntity<>("Internal Server Error: " + e.getClass().getName(), HttpStatus.NO_CONTENT);
+        }
     }
 }
