@@ -1,0 +1,12 @@
+server:
+  port: 8234
+
+spring:
+  data:
+    mongodb:
+      uri: <MONGODB_URI>
+      database: db_water
+  security:
+    user:
+      name: admin
+      password: admin
