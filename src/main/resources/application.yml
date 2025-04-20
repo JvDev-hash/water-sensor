@@ -2,21 +2,10 @@ server:
   port: 8234
 
 spring:
-  datasource:
-    url: jdbc:h2:file:./db/waterdb
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
+  data:
+    mongodb:
+      uri: mongodb+srv://jvbaprof:dgIvzrhWsaYCJmB3@jvcluster.rsfoux2.mongodb.net/?retryWrites=true&w=majority&appName=JvCluster
+      database: db_water
   security:
     user:
       name: admin

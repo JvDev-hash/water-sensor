@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
+import house.sensoring.waterSensor.DTO.WaterDTO;
 import house.sensoring.waterSensor.model.Water;
 import house.sensoring.waterSensor.repository.WaterRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,21 +27,30 @@ public class WaterService {
     }
 
     public Water getLastWaterReading() {
-        Water reading = waterRepository.findLastReading()
-                .orElseThrow(() -> new EntityNotFoundException("There is no entity: "));
+        Water reading = waterRepository.findTop1ByOrderByTimestampDesc()
+                .orElseThrow(() -> new NoSuchFieldError("There is no entity: "));
         System.out.println(reading);
         return reading;
     }
 
-    public Water saveWaterReading(Water water) {
-        Water lastReading = waterRepository.findLastReading()
-                .orElseThrow(() -> new EntityNotFoundException("There is no entity: "));
+    public Water saveWaterReading(WaterDTO water) {
+        Water lastReading = waterRepository.findTop1ByOrderByTimestampDesc()
+                .orElseThrow(() -> new NoSuchFieldError("There is no entity: "));
 
         if(!lastReading.getHasWater().equals(water.getHasWater())) {
-            water.setTimestamp(new Date());
-            return waterRepository.save(water);
+            var waterReading = new Water();
+            waterReading.setHasWater(water.getHasWater());
+            waterReading.setTimestamp(new Date());
+            return waterRepository.save(waterReading);
         } else {
             throw new DuplicateFormatFlagsException("Duplicate value");
         }
+    }
+
+    public Water startWaterReading(WaterDTO water) {
+        var waterReading = new Water();
+        waterReading.setHasWater(water.getHasWater());
+        waterReading.setTimestamp(new Date());
+        return waterRepository.save(waterReading);
     }
 }
