@@ -1,15 +1,13 @@
 package house.sensoring.waterSensor.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import house.sensoring.waterSensor.model.Water;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface WaterRepository extends JpaRepository<Water, Long> {
+public interface WaterRepository extends MongoRepository<Water, UUID> {
 
-    @Query(value = "SELECT * FROM water w ORDER BY w.id DESC LIMIT 1", nativeQuery = true)
-    Optional<Water> findLastReading();
+    Optional<Water> findTop1ByOrderByTimestampDesc();
     
 }

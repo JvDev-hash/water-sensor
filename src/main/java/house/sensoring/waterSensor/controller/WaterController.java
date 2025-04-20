@@ -1,6 +1,5 @@
 package house.sensoring.waterSensor.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import house.sensoring.waterSensor.DTO.WaterDTO;
 import house.sensoring.waterSensor.model.Water;
 import house.sensoring.waterSensor.service.WaterService;
 
@@ -41,7 +41,7 @@ public class WaterController {
             Water reading = waterService.getLastWaterReading();
             return new ResponseEntity<>(reading, HttpStatus.OK);
         } catch (Exception e) {
-            if (e.getClass().getName().equals("jakarta.persistence.EntityNotFoundException")) {
+            if (e.getClass().getName().equals("java.lang.NoSuchFieldError")) {
                 return new ResponseEntity<>(e.getMessage().getBytes(StandardCharsets.UTF_8), HttpStatus.NOT_FOUND);
             } else {
                 return new ResponseEntity<>("Internal Server Error: " + e.getClass().getName(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -49,14 +49,25 @@ public class WaterController {
         }
     }
     @PostMapping("/reading")
-    public ResponseEntity<?> saveWaterReading(@RequestBody Water water) {
+    public ResponseEntity<?> saveWaterReading(@RequestBody WaterDTO water) {
         try {
             waterService.saveWaterReading(water);
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (EntityNotFoundException e){
+        } catch (NoSuchFieldError e){
             return new ResponseEntity<>(e.getMessage().getBytes(StandardCharsets.UTF_8), HttpStatus.NOT_FOUND);
         } catch (DuplicateFormatFlagsException e){
             return new ResponseEntity<>("Internal Server Error: " + e.getClass().getName(), HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PostMapping("/start")
+    public ResponseEntity<?> startWaterSensor(@RequestBody WaterDTO water) {
+        try {
+            waterService.startWaterReading(water);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>("Internal Server Error: " + e.getClass().getName(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
