@@ -1,10 +1,14 @@
-name: Java CI with Maven
+name: Java CI with Maven and MongoDB
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+env:
+  MONGODB_URI: ${{ secrets.MONGODB_ATLAS_URI }}
+  SPRING_DATA_MONGODB_URI: ${{ secrets.MONGODB_ATLAS_URI }}
 
 jobs:
   test:
@@ -22,3 +26,6 @@ jobs:
     
     - name: Run unit tests
       run: mvn test
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_ATLAS_URI }}
+        SPRING_DATA_MONGODB_URI: ${{ secrets.MONGODB_ATLAS_URI }}
