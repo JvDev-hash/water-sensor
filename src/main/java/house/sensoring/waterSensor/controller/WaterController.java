@@ -40,12 +40,11 @@ public class WaterController {
         try {
             Water reading = waterService.getLastWaterReading();
             return new ResponseEntity<>(reading, HttpStatus.OK);
+        } catch (NoSuchFieldError e) {
+            return new ResponseEntity<>(e.getMessage().getBytes(StandardCharsets.UTF_8), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            if (e.getClass().getName().equals("java.lang.NoSuchFieldError")) {
-                return new ResponseEntity<>(e.getMessage().getBytes(StandardCharsets.UTF_8), HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>("Internal Server Error: " + e.getClass().getName(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            return new ResponseEntity<>("Internal Server Error: " + e.getClass().getName(), HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
     @PostMapping("/reading")
