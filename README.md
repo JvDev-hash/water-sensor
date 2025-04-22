@@ -5,7 +5,7 @@ A Spring Boot application that monitors water sensor readings and provides REST 
 ## Features
 
 - REST API endpoints for water sensor readings
-- H2 in-memory database for data storage
+- MongoDB database for data storage
 - Docker support for containerization
 - Spring Boot 3.x with Java 17
 
@@ -48,10 +48,6 @@ docker build -t water-sensor .
 ```bash
 docker run -p 8234:8234 --name water-sensor -d water-sensor
 ```
-
-## H2 Console
-
-The H2 database console is available at `http://localhost:8234/h2-console` when running in development mode.
 
 ## Contributing
 
